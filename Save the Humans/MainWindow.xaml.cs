@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Media.Animation;
+
 
 namespace Save_the_Humans
 {
@@ -20,6 +22,7 @@ namespace Save_the_Humans
     /// </summary>
     public partial class MainWindow : Window
     {
+        Random random = new Random();
         public MainWindow()
         {
             InitializeComponent();
@@ -28,6 +31,36 @@ namespace Save_the_Humans
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddEnemy();
+        }
+
+        private void AddEnemy()
+        {
+            ContentControl enemy = new ContentControl();
+            enemy.Template = Resources["EnemyTemplate"] as ControlTemplate;
+            AnimateEnemy(enemy, 0, playArea.ActualWidth - 100, "(Canvas.Left)");
+            AnimateEnemy(enemy, random.Next((int)playArea.ActualHeight - 100),
+                random.Next((int)playArea.ActualHeight - 100), "(Canvas.Top)");
+            playArea.Children.Add(enemy);
+        }
+
+        private void AnimateEnemy(ContentControl enemy, double from, double to, string propertyToAnimate)
+        {
+            Storyboard storyboard = new Storyboard() { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever };
+            DoubleAnimation animation = new DoubleAnimation()
+            {
+                From = from,
+                To = to,
+                Duration = new Duration(TimeSpan.FromSeconds(random.Next(4, 6))),
+            };
+            Storyboard.SetTarget(animation, enemy);
+            Storyboard.SetTargetProperty(animation, new PropertyPath(propertyToAnimate));
+            storyboard.Children.Add(animation);
+            storyboard.Begin();
         }
     }
 }
