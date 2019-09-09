@@ -26,7 +26,7 @@ namespace Save_the_Humans
         Random random = new Random();
         DispatcherTimer enemyTimer = new DispatcherTimer();
         DispatcherTimer targetTimer = new DispatcherTimer();
-        bool humanCaptuerd = false;
+        bool humanCaptured = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -35,13 +35,13 @@ namespace Save_the_Humans
             enemyTimer.Interval = TimeSpan.FromSeconds(2);
 
             targetTimer.Tick += TargetTimer_Tick;
-            enemyTimer.Interval = TimeSpan.FromSeconds(.1);
+            targetTimer.Interval = TimeSpan.FromSeconds(.01);
         }
 
-        private void TargetTimer_Tick(object sender, EventArgs e)
+         void TargetTimer_Tick(object sender, EventArgs e)
         {
-            progressBar.Value += 1;
-            if (progressBar.Value >=  progressBar.Maximum)
+            progressBar.Value += .1;
+            if (progressBar.Value >= progressBar.Maximum)
                 EndTheGame();
         }
 
@@ -51,25 +51,34 @@ namespace Save_the_Humans
             {
                 enemyTimer.Stop();
                 targetTimer.Stop();
-                humanCaptuerd = false;
+                humanCaptured = false;
                 startButton.Visibility = Visibility.Visible;
                 playArea.Children.Add(gameOverText);
             }
         }
 
-        private void EnemyTimer_Tick(object sender, EventArgs e)
+         void EnemyTimer_Tick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            AddEnemy();
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            AddEnemy();
+            StartGame();
+        }
+
+        private void StartGame()
+        {
+            human.IsHitTestVisible = true;
+            humanCaptured = false;
+            progressBar.Value = 0;
+            startButton.Visibility = Visibility.Collapsed;
+            playArea.Children.Clear();
+            playArea.Children.Add(target);
+            playArea.Children.Add(human);
+            enemyTimer.Start();
+            targetTimer.Start();
         }
 
         private void AddEnemy()
@@ -95,6 +104,11 @@ namespace Save_the_Humans
             Storyboard.SetTargetProperty(animation, new PropertyPath(propertyToAnimate));
             storyboard.Children.Add(animation);
             storyboard.Begin();
+        }
+
+        private void Save_the_Humans_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }
